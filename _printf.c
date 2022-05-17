@@ -1,104 +1,86 @@
-#include "main.h"
 #include <stdarg.h>
+#include "main.h"
+#include <stddef.h>
 
 /**
- * _printf - function produces output according to a format.
- * @format: is a pointer to string
- * Return: is the count of printed characters
+ * get_op - select function for conversion char
+ * @c: char to check
+ * Return: pointer to function
  */
+
+int (*get_op(const char c))(va_list)
+{
+	int i = 0;
+
+	flags_p fp[] = {
+		{"c", print_char},
+		{"s", print_str},
+		{"i", print_nbr},
+		{"d", print_nbr},
+		{"b", print_binary},
+		{"o", print_octal},
+		{"x", print_hexa_lower},
+		{"X", print_hexa_upper},
+		{"u", print_unsigned},
+		{"S", print_str_unprintable},
+		{"r", print_str_reverse},
+		{"p", print_ptr},
+		{"R", print_rot13},
+		{"%", print_percent}
+	};
+	while (i < 14)
+	{
+		if (c == fp[i].c[0])
+		{
+			return (fp[i].f);
+		}
+		i++;
+	}
+	return (NULL);
+}
+
+/**
+ * _printf - Reproduce behavior of printf function
+ * @format: format string
+ * Return: value of printed chars
+ */
+
 int _printf(const char *format, ...)
 {
-	const char *string;
+	va_list ap;
+	int sum = 0, i = 0;
+	int (*func)();
 
-	int count = 0;
-
-	va_list args;
-
-	if (!format)
+	if (!format || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
+	va_start(ap, format);
 
-	va_start(args, format);
-	string = format;
-
-	count = loop_format(string, args);
-
-	va_end(args);
-
-	return (count);
-}
-
-/**
- * loop_format - function is to print format
- * @format: is a pointer to string
- * @args: is a va_list args
- * Return: is an integer.
- */
-int loop_format(const char *format, va_list args)
-{
-	int i = 0, counter = 0, flag = 0, check_flag = 0, f_counter = 0;
-
-	while (i < _strlen((char *)format) && *(format + i) != '\0')
+	while (format[i])
 	{
-		char charac = format[i];
-
-		if (charac == '%')
+		if (format[i] == '%')
 		{
-			flag++, i++;
-			charac = format[i];
-			if (charac == '\0' && _strlen((char *)format) == 1)
-				return (-1);
-			if (charac == '\0')
-				return (counter);
-			if (charac == '%')
-				flag++;
+			if (format[i + 1] != '\0')
+				func = get_op(format[i + 1]);
+			if (func == NULL)
+			{
+				_putchar(format[i]);
+				sum++;
+				i++;
+			}
 			else
 			{
-				f_counter = func_service(charac, args);
-				if (f_counter >= 0 && f_counter != -1)
-				{
-					i++;
-					charac = format[i];
-					if (charac == '%')
-						flag--;
-					counter += f_counter;
-				}
-				else if (f_counter == -1 && charac != '\n' && flag == 1)
-					counter += _putchar('%');
+				sum += func(ap);
+				i += 2;
+				continue;
 			}
-
 		}
-		check_flag = check_percent(&flag, charac);
-		counter += check_flag;
-		if (check_flag == 0 && charac != '%' && charac != '\0')
-			counter += _putchar(charac), i++;
-		check_flag = 0;
+		else
+		{
+			_putchar(format[i]);
+			sum++;
+			i++;
+		}
 	}
-	return (counter);
+	va_end(ap);
+	return (sum);
 }
-
-
-/**
- * check_percent - print a percentage
- * @flag: is address of an int
- * @charac: is a char
- * Return: is 1 if % was printed, 0 otherwise.
- */
-int check_percent(int *flag, char charac)
-{
-	int count = 0;
-
-	int tmp;
-
-	tmp = *flag;
-
-	if (tmp == 2 && charac == '%')
-	{
-		count = _putchar('%');
-		tmp = 0;
-	}
-	return (count);
-}
-
-
-/**
-
