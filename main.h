@@ -18,4 +18,4 @@ void _puts(char *str);
 int _strlen(char *s);
 char *convert_to_format(char *rep, unsigned int number, int base);
 
-#endif /*MAIN_H*/
+#endif
