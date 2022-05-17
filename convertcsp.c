@@ -1,6 +1,6 @@
 /*
  * File: convert_c_s_p.c
- * Auth: Hailemariam Moges
+ * Auth: Hailemariam and Amanuel
  */
 
 #include "main.h"
