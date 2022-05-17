@@ -20,7 +20,7 @@ int _printf(const char *format, ...)
 	va_start(arg, format);
 	str = format;
 
-	cnt = loopfrt(str, arg);
+	count = loopfrt(string, args);
 
 	va_end(arg);
 
@@ -35,9 +35,9 @@ int _printf(const char *format, ...)
  */
 int loopfrt(const char *format, va_list arg)
 {
-	int i = 0, count = 0, flag = 0, chkflag = 0, countf = 0;
+	int i = 0, cntr = 0, flag = 0, chkflag = 0, fcntr = 0;
 
-	while (i < _stringlength((char *)format) && *(format + i) != '\0')
+	while (i < stringlength((char *)format) && *(format + i) != '\0')
 	{
 		char chara = format[i];
 
@@ -45,35 +45,35 @@ int loopfrt(const char *format, va_list arg)
 		{
 			flag++, i++;
 			chara = format[i];
-			if (chara == '\0' && _stringlength((char *)format) == 1)
+			if (chara == '\0' && stringlength((char *)format) == 1)
 				return (-1);
 			if (chara == '\0')
-				return (count);
+				return (cntr);
 			if (chara == '%')
 				flag++;
 			else
 			{
-				countf = fun_service(chara, arg);
-				if (countf >= 0 && f_count != -1)
+				fcntr = funservice(chara, arg);
+				if (fcntr >= 0 && fcntr != -1)
 				{
 					i++;
 					chara = format[i];
 					if (chara == '%')
 						flag--;
-					count += countf;
+					cntr += fcntr;
 				}
-				else if (countf == -1 && chara != '\n' && flag == 1)
-					count += _putchar('%');
+				else if (fcntr == -1 && chara != '\n' && flag == 1)
+					cntr += _putchar('%');
 			}
 
 		}
 		chkflag = chkpercent(&flag, chara);
-		count += chkflag;
+		cntr += chkflag;
 		if (chkflag == 0 && chara != '%' && chara != '\0')
-			count += _putchar(chara), i++;
+			cntr += _putchar(chara), i++;
 		chkflag = 0;
 	}
-	return (count);
+	return (cntr);
 }
 
 
@@ -112,14 +112,14 @@ int funservice(char chara, va_list arg)
 
 	cnt = charswitch(chara, arg);
 
-	return (count);
+	return (cnt);
 }
 
 
 /**
  * charswitch - switch character to find arg
  * @arg: is a va_list argument
- * @a: is a char
+ * @c: is a char
  * Return: count of printed characters
  */
 int charswitch(char a, va_list arg)
@@ -129,32 +129,32 @@ int charswitch(char a, va_list arg)
 	switch (a)
 	{
 		case 'c':
-			count += print_character(arg);
+			cnt += prtcharacter(arg);
 			break;
 		case 'd':
 		case 'i':
-			count += print_signInt(arg, 10);
+			cnt += prtsignInt(arg, 10);
 			break;
 		case 's':
-			count += print_string(arg);
+			cnt += prtstring(arg);
 			break;
 		case 'x':
-			count += print_base16_upper_lower(arg, "0123456789abcdef");
+			cnt += prtbase16_upper_lower(arg, "0123456789abcdef");
 			break;
 		case 'X':
-			count += print_base16_upper_lower(arg, "0123456789ABCDEF");
+			cnt += prtbase16_upper_lower(arg, "0123456789ABCDEF");
 			break;
 		case 'p':
-			count += print_addr(arg);
+			cnt += prtaddr(arg);
 			break;
 		case 'o':
-			count += print_unsignedInt(arg, 8);
+			cnt += prtunsignedInt(arg, 8);
 			break;
 		case 'u':
-			count += print_unsignedInt(arg, 10);
+			cnt += prtunsignedInt(arg, 10);
 			break;
 		default:
-			count = -1;
+			cnt = -1;
 	}
 	return (cnt);
 }
