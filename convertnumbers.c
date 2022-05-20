@@ -1,7 +1,6 @@
 /*
  * File: convert_numbers.c
  * Auth: Hailemariam and Amanuel
- *       Michael Klein
  */
 
 #include "main.h"
